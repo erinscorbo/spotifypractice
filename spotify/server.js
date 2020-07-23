@@ -30,8 +30,7 @@ if (err) {
     }
 });
 });
-
-app.get('/history', (req, res, res2) => {
+app.get('/history', (req, res) => {
     db.find({}, (err, docs) => {
     if (err) {
         throw Error('Failed to retrieve documents');
@@ -43,12 +42,29 @@ app.get('/history', (req, res, res2) => {
         const arr = data.map(e => ({
             id: e.id,
             name: e.name,
+            artist: e.artists[0].name,
+            url: e.album.images[0].url,
         }));
-        const output = data.map( function(item){
-            return item.id;
-        }).join(',');
-        res2.toString(output);
-        console.log(res2);
+        res.json(arr);
+        })
+        .catch(err => console.log(err));
+    });
+});
+app.get('/trying/ids/:songids', (req, res) => {
+    const ids=req.params.songids;
+    db.find({}, (err, docs) => {
+    if (err) {
+        throw Error('Failed to retrieve documents');
+    }
+    const accessToken = docs[0].access_token;
+    getTrackInfo(accessToken, ids)
+        .then(data => {
+        const arr = data.map(e => ({
+            tempo: e.tempo,
+            danceability: e.danceability,
+            energy: e.energy,
+            valence: e.valence,
+        }));
         res.json(arr);
         })
         .catch(err => console.log(err));

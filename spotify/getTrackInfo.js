@@ -1,8 +1,7 @@
 const fetch = require('node-fetch');
 
-const getTrackInfo= accessToken => {
-const url = 'https://api.spotify.com/v1/audio-features/?';
-
+const getTrackInfo= (accessToken, ids) => {
+const url = 'https://api.spotify.com/v1/audio-features?ids='+ids;
 return fetch(url, {
     method: 'GET',
     headers: {
@@ -12,8 +11,7 @@ return fetch(url, {
     },
 })
     .then(res => res.json())
-    .then(data => data.items)
+    .then(data => data.audio_features)
     .catch(error => console.log(error));
 };
-
 module.exports = getTrackInfo;
